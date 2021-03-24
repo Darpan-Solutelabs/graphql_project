@@ -1,5 +1,7 @@
 module Types
   class MutationType < Types::BaseObject
+    field :accept_appointment, mutation: Mutations::AcceptAppointment
+    field :create_appointment, mutation: Mutations::CreateAppointment
     field :sign_in_user, mutation: Mutations::SignInUser
     field :create_user, mutation: Mutations::CreateUser
     # TODO: remove me
