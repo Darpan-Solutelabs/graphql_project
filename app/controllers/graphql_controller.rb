@@ -9,8 +9,7 @@ class GraphqlController < ApplicationController
     query = params[:query]
     operation_name = params[:operationName]
     context = {
-      # Query context goes here, for example:
-      # current_user: current_user,
+      current_user: current_user
     }
     result = GraphqlProjectSchema.execute(query, variables: variables, context: context, operation_name: operation_name)
     render json: result
@@ -20,6 +19,18 @@ class GraphqlController < ApplicationController
   end
 
   private
+
+  def current_user
+    if request.headers['Authorization'].present?
+      begin
+          jwt_payload = JWT.decode(request.headers['Authorization'].split(' ')[0], Rails.application.secrets.secret_key_base).first
+          @current_user_id = jwt_payload['id']
+      rescue Exception => e 
+          { error: e.message }
+      end
+    end
+    User.find_by_id(@current_user_id)
+  end 
 
   # Handle variables in form data, JSON body, or a blank value
   def prepare_variables(variables_param)
