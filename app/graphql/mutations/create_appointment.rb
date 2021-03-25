@@ -9,25 +9,16 @@ module Mutations
 
     def resolve(doctor_id:, date:, reason:)
       binding.pry
-      if context[:current_user]
-        if context[:current_user].is_patient?
-          if User.find_by_id(doctor_id).is_patient?
-            GraphQL::ExecutionError.new("Patient can not assign as a doctor", options: {status: :unauthorized}) 
-          end
-          appointment = Appointment.create!(
-            doctor_id: doctor_id,
-            patient_id: context[:current_user].id,
-            date: date,
-            reason: reason
-          )
-          { appointment: appointment }
-        else
-          GraphQL::ExecutionError.new("Doctor can not create appointment", options: {status: :unauthorized})  
-        end
-      else
-        GraphQL::ExecutionError.new("User is not signed in", options: {status: :unauthorized})
-      end
+      raise GraphQL::ExecutionError.new("User is not signed in", options: {status: :unauthorized}) if !context[:current_user]
+      raise GraphQL::ExecutionError.new("Doctor can not create appointment", options: {status: :unauthorized}) if context[:current_user].is_doctor?
+      raise GraphQL::ExecutionError.new("Patient can not assign as a doctor", options: {status: :unauthorized}) if User.find_by_id(doctor_id).is_patient?
+      appointment = Appointment.create!(
+        doctor_id: doctor_id,
+        patient_id: context[:current_user].id,
+        date: date,
+        reason: reason
+      )
+      { appointment: appointment }
     end
-
   end
 end

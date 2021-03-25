@@ -7,27 +7,23 @@ module Mutations
     field :message, String, null: true
 
     def resolve(option:, appointment_id:)
-      if context[:current_user].is_doctor?
-        if option != 'accept' && option!= 'reject'
-          GraphQL::ExecutionError.new('Option is invalid', options: {status: :invalid})
-        end
-        appointment = Appointment.find_by_id(appointment_id)
-        if appointment
-          HospitalMailer.appointment_confirmation(appointment, option).deliver_later
-          if option == 'accept'
-            appointment.update(accepted: true)
-            { message: 'Appointment accepted successfully' }
-          else
-            appointment.upadate(accepted: false) if option == 'reject'
-            { message: 'Appointment rejected successfully' }
-          end
+      raise GraphQL::ExecutionError.new('Authorization token is missing', options: {status: :unauthorized}) if !context[:current_user]
+      raise GraphQL::ExecutionError.new('Only Doctor can approve or reject the appointment', options: {status: :unauthorized}) if !context[:current_user].is_doctor?
+      raise GraphQL::ExecutionError.new('Option is invalid', options: {status: :invalid}) if option != 'accept' && option!= 'reject'
+      
+      appointment = Appointment.find_by_id(appointment_id)
+      if appointment
+        HospitalMailer.appointment_confirmation(appointment, option).deliver_later
+        if option == 'accept'
+          appointment.update(accepted: true)
+          { message: 'Appointment accepted successfully' }
         else
-          GraphQL::ExecutionError.new('Appointment id is invalid', options: {status: :invalid})
+          appointment.upadate(accepted: false)
+          { message: 'Appointment rejected successfully' }
         end
       else
-        GraphQL::ExecutionError.new('Only Doctor can approve or reject the appointment', options: {status: :unauthorized})
-      end
+        raise GraphQL::ExecutionError.new('Appointment id is invalid', options: {status: :invalid})
+      end 
     end
-
   end
 end
