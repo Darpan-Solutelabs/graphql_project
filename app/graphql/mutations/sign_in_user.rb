@@ -12,7 +12,7 @@ module Mutations
       if user && user.authenticate(password)
         { token: user.generate_jwt, user: user }
       else
-        GraphQL::ExecutionError.new("Invalid Email or Password", options: {status: :invalid, status: 402})
+        GraphQL::ExecutionError.new(I18n.t('signin_invalid'), options: {status: :invalid, status: 402})
       end
     end
 

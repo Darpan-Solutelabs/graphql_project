@@ -31,3 +31,15 @@
 
 en:
   hello: "Hello world"
+
+  token_missing: "Token is missing"
+  unauthorized: "User can not access this link"
+  invalid: "Invalid Argument"
+  signin_invalid: "Invalid email or password"
+  id_invalid: "Provided Id is invalid"
+  email_success: "Email sent successfully"
+  doctor_create_appointment: "doctor cannot create appointment"
+  doctor_as_patient: "Patient can not assign as a doctor"
+  doctor_approve_appointment: "Only Doctor can approve or reject the appointment"
+  appointment_accept: "Appointment accepted successfully"
+  appointment_reject: "Appointment rejected successfully"

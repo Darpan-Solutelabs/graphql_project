@@ -8,7 +8,7 @@ class Resolvers::SearchUser < GraphQL::Schema::Resolver
     scope { if context[:current_user]
                 context[:current_user]
             else
-                raise GraphQL::ExecutionError.new("Token is missing", options: {status: :unauthorized})
+                raise GraphQL::ExecutionError.new(I18n.t('token_missing'), options: {status: :unauthorized})
             end
           }
 
@@ -30,7 +30,7 @@ class Resolvers::SearchUser < GraphQL::Schema::Resolver
         if (scope.id == user[0].id) || (scope.is_doctor? && user[0].is_patient?) || (scope.is_patient? && user[0].is_doctor?)
             return user
         end
-        GraphQL::ExecutionError.new("You can not access this user", options: { status: :unauthorized })
+        GraphQL::ExecutionError.new(I18n.t('unauthorized'), options: { status: :unauthorized })
     end
 
 
@@ -60,6 +60,6 @@ class Resolvers::SearchUser < GraphQL::Schema::Resolver
     end
 
     def raise_error
-        GraphQL::ExecutionError.new("Invalid Argument", options: { status: :invalid })
+        GraphQL::ExecutionError.new(I18n.t('invalid'), options: { status: :invalid })
     end
 end

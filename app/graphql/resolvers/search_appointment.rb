@@ -8,7 +8,7 @@ class Resolvers::SearchAppointment < GraphQL::Schema::Resolver
     scope { if context[:current_user] 
                 context[:current_user]
             else 
-                raise GraphQL::ExecutionError.new('Token is Empty', options: { status: :unauthorized }) 
+                raise GraphQL::ExecutionError.new(I18n.t('token_missing'), options: { status: :unauthorized }) 
             end
         }
 

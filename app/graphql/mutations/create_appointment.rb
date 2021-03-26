@@ -8,9 +8,9 @@ module Mutations
     field :appointment, Types::AppointmentType, null: true
 
     def resolve(doctor_id:, date:, reason:)
-      raise GraphQL::ExecutionError.new("User is not signed in", options: {status: :unauthorized}) if !context[:current_user]
-      raise GraphQL::ExecutionError.new("Doctor can not create appointment", options: {status: :unauthorized}) if context[:current_user].is_doctor?
-      raise GraphQL::ExecutionError.new("Patient can not assign as a doctor", options: {status: :unauthorized}) if User.find_by_id(doctor_id).is_patient?
+      raise GraphQL::ExecutionError.new(I18n.t('token_missing'), options: {status: :unauthorized}) if !context[:current_user]
+      raise GraphQL::ExecutionError.new(I18n.t('doctor_create_appointment'), options: {status: :unauthorized}) if context[:current_user].is_doctor?
+      raise GraphQL::ExecutionError.new(I18n.t('doctor_as_patient'), options: {status: :unauthorized}) if User.find_by_id(doctor_id).is_patient?
       appointment = Appointment.new(
         doctor_id: doctor_id,
         patient_id: context[:current_user].id,
