@@ -8,8 +8,8 @@ class Appointment < ApplicationRecord
     validates :patient_id, presence: true
     validates :date, presence: true
     validates :reason, presence: true
-    validate :check_if_appointment_is_already_there
-    validate :check_if_date_is_not_passed
+    validate :check_if_appointment_is_already_there, on: :create
+    validate :check_if_date_is_not_passed, on: :create
 
     def check_if_appointment_is_already_there
         appointment = Appointment.where(doctor_id: self.doctor_id, patient_id: self.patient_id, date: self.date)
