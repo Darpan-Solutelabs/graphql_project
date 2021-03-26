@@ -12,7 +12,7 @@ module Mutations
     field :user, Types::UserType, null: true
 
     def resolve(name:, email:, contact:, address:, password:, role:)
-      user = User.create!(
+      user = User.new(
         name: name,
         email: email,
         contact: contact,
@@ -20,12 +20,16 @@ module Mutations
         password: password
       )
 
-      roles = [:doctor, :patient]
+      if user.save
+        roles = [:doctor, :patient]
 
-      user.add_role roles[role]
+        user.add_role roles[role]
 
-      token = user.generate_jwt
-      {token: token, user: user}
+        token = user.generate_jwt
+        {token: token, user: user}
+      else
+        raise GraphQL::ExecutionError.new(user.errors.full_messages)
+      end
     end
   end
 end
