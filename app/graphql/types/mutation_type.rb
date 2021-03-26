@@ -1,5 +1,6 @@
 module Types
   class MutationType < Types::BaseObject
+    field :update_user, mutation: Mutations::UpdateUser
     field :send_consultation, mutation: Mutations::SendConsultation
     field :accept_appointment, mutation: Mutations::AcceptAppointment
     field :create_appointment, mutation: Mutations::CreateAppointment
