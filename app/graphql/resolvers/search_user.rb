@@ -43,6 +43,7 @@ class Resolvers::SearchUser < GraphQL::Schema::Resolver
     end
 
     def apply_filter_with_doctors(scope)
+        binding.pry
         if scope.is_patient?
             scope.doctors
         else
